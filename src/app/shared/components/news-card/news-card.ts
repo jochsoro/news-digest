@@ -1,5 +1,5 @@
 import { Component, computed, input, output, signal } from '@angular/core';
-import { SummaryBlock } from '../../../core/models/article.model';
+import { ArticleRef, SummaryBlock } from '../../../core/models/article.model';
 import { CATEGORIES } from '../../../core/data/categories.data';
 import { CATEGORY_PALETTE } from '../../../core/data/category-palette.data';
 
@@ -36,6 +36,8 @@ export class NewsCard {
   readonly active = input(false);
 
   readonly opened = output<SummaryBlock>();
+  /** Lecture dans l'app : la source à ouvrir dans le lecteur intégré. */
+  readonly read = output<{ block: SummaryBlock; source: ArticleRef }>();
   readonly saved = output<SummaryBlock>();
   readonly shared = output<SummaryBlock>();
   readonly passed = output<SummaryBlock>();
@@ -65,6 +67,8 @@ export class NewsCard {
     return end === -1 ? s : s.slice(0, end + 1).replace(/[.]$/, '');
   });
   readonly rest = computed(() => this.block().summary.slice(this.lede().length + 1).trim());
+  /** Au-delà de ~70 caractères, la manchette passe un cran plus petit pour tenir en 4 lignes. */
+  readonly longTitle = computed(() => this.lede().length > 70);
   readonly primarySource = computed(() => this.block().sources[0] ?? null);
   readonly extraSources = computed(() => Math.max(0, this.block().sources.length - 1));
 

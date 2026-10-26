@@ -7,7 +7,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Share } from '@capacitor/share';
 
 import { NewsService } from '../../core/services/news.service';
@@ -17,7 +17,8 @@ import { GeoTaxonomyService } from '../../core/services/geo-taxonomy.service';
 import { HapticsService } from '../../core/services/haptics.service';
 import { NewsCard } from '../../shared/components/news-card/news-card';
 import { CategoryFilter } from '../../shared/components/category-filter/category-filter';
-import { SummaryBlock } from '../../core/models/article.model';
+import { ArticleRef, SummaryBlock } from '../../core/models/article.model';
+import { ReaderService } from '../../core/services/reader.service';
 import { CategoryId } from '../../core/models/category.model';
 import { CATEGORIES } from '../../core/data/categories.data';
 
@@ -33,6 +34,8 @@ export class DigestPage {
   private readonly perso = inject(PersonalizationService);
   private readonly geo = inject(GeoTaxonomyService);
   private readonly haptics = inject(HapticsService);
+  private readonly router = inject(Router);
+  private readonly reader = inject(ReaderService);
 
   private readonly feedEl = viewChild<ElementRef<HTMLElement>>('feed');
 
@@ -82,6 +85,21 @@ export class DigestPage {
       this.current.set(0);
       this.news.loadDigest(regionId);
     });
+
+    // Métro : dès que l'édition est là, on précharge les manchettes en
+    // arrière-plan pour qu'elles se lisent sans réseau.
+    effect(() => {
+      const digest = this.news.digest();
+      if (!digest) return;
+      const urls = digest.blocks.map((b) => b.sources[0]?.url).filter((u): u is string => !!u);
+      void this.reader.prefetch(urls, 6);
+    });
+  }
+
+  /** « Lire » : l'article épuré dans l'app. */
+  onRead({ block, source }: { block: SummaryBlock; source: ArticleRef }): void {
+    this.haptics.tap();
+    this.router.navigate(['/read'], { queryParams: { u: source.url }, state: { block, source } });
   }
 
   labelOf(block: SummaryBlock | undefined): string | null {

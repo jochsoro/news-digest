@@ -40,7 +40,10 @@
                 "inlineCritical": true
               },
               "fonts": false
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "@mozilla/readability"
+            ]
           },
           "configurations": {
             "production": {

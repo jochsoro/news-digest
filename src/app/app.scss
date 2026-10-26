@@ -56,7 +56,8 @@
 
 /* Les sous-pages (réglages, régions) ont leur propre bouton retour : pas de dock. */
 :host:has(app-settings-page) .dock,
-:host:has(app-region-select-page) .dock {
+:host:has(app-region-select-page) .dock,
+:host:has(app-reader-page) .dock {
   display: none;
 }
 

@@ -87,6 +87,7 @@
           [isSaved]="savedSet().has(block.category)"
           [active]="current() === i"
           (opened)="onOpened($event)"
+          (read)="onRead($event)"
           (saved)="onSaved($event)"
           (shared)="onShared($event)"
           (passed)="onPassed($event)"

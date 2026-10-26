@@ -118,11 +118,17 @@ export class NativeTabsService {
     const mode = r?.mode ?? 'overlay';
     if (typeof r?.barHeight === 'number' && r.barHeight > 0) this.barHeight = r.barHeight;
     this.applyMode(mode, r?.sideInset);
-    await NativeTabBar.setVisible({ visible: true, animated: false });
+    await NativeTabBar.setVisible({ visible: !this.isSubPage(this.router.url), animated: false });
+  }
+
+  /** Pages sans onglet (lecteur, réglages, régions) : la barre se retire. */
+  private isSubPage(url: string): boolean {
+    return url.startsWith('/read') || url.startsWith('/settings') || url.startsWith('/regions');
   }
 
   private async sync(): Promise<void> {
     if (!this.available) return;
+    await NativeTabBar.setVisible({ visible: !this.isSubPage(this.router.url) }).catch(() => undefined);
     const theme = this.themeFor(this.router.url);
     if (theme !== this.lastTheme) {
       // Le thème de la barre ne se change qu'en reconfigurant (API Dalà).

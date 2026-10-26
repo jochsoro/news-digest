@@ -53,16 +53,17 @@
       <span class="chip">
         <span class="chip-dot"></span>{{ m?.label }}
       </span>
-      <h1 class="headline">{{ lede() }}</h1>
+      <h1 class="headline" [class.long]="longTitle()">{{ lede() }}</h1>
       @if (rest()) {
         <p class="body">{{ rest() }}</p>
       }
       <div class="actions">
         @if (primarySource(); as src) {
-          <a class="source" [href]="src.url" target="_blank" rel="noopener noreferrer" (click)="opened.emit(b)">
-            Lire sur {{ src.source }}
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
-          </a>
+          <button class="source" (click)="read.emit({ block: b, source: src })">
+            Lire
+            <span class="source-name">{{ src.source }}</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
         }
         <button class="act" [class.on]="isSaved()" (click)="keep()" [attr.aria-label]="isSaved() ? 'Gardé' : 'Garder'">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16l-6-4-6 4z"/></svg>

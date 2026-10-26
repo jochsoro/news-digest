@@ -1,0 +1,236 @@
+/* Le lecteur : typographie de lecture longue, calme, dans le thème de l'app. */
+
+.reader {
+  max-width: calc(680px + var(--rail-w) + var(--safe-r));
+}
+
+.topbar {
+  gap: 8px;
+
+  .icon-btn { flex: 0 0 auto; }
+}
+
+/* ---------- article ---------- */
+.article {
+  padding-top: 8px;
+  animation: fade 0.35s ease both;
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.hero {
+  margin: 4px 0 18px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--paper-3);
+  aspect-ratio: 16 / 10;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.kicker {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--cat, var(--accent));
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: clamp(1.7rem, 7vw, 2.3rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  margin-bottom: 12px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--ink-3);
+  margin-bottom: 24px;
+
+  .site { font-weight: 600; color: var(--ink-2); }
+  .sep { opacity: 0.6; }
+}
+
+/* ---------- corps de texte ---------- */
+.prose {
+  font-size: 1.08rem;
+  line-height: 1.68;
+  color: var(--ink);
+  max-width: 68ch;
+
+  /* Le contenu est injecté : les sélecteurs doivent percer l'encapsulation. */
+  ::ng-deep {
+    p { margin: 0 0 1.15em; text-wrap: pretty; }
+    h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 1.8em 0 0.6em;
+    }
+    h2 { font-size: 1.45rem; }
+    h3 { font-size: 1.2rem; }
+    h4 { font-size: 1.05rem; }
+    blockquote {
+      margin: 1.4em 0;
+      padding: 4px 0 4px 18px;
+      border-left: 3px solid var(--accent);
+      color: var(--ink-2);
+      font-style: italic;
+    }
+    ul, ol { padding-left: 1.3em; margin: 0 0 1.15em; }
+    li { margin-bottom: 0.4em; }
+    figure {
+      margin: 1.6em 0;
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--r);
+      background: var(--paper-3);
+    }
+    figcaption {
+      font-size: 0.8rem;
+      color: var(--ink-3);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+    a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    hr { border: 0; border-top: 1px solid var(--rule); margin: 2em 0; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; }
+    pre { overflow-x: auto; padding: 12px; background: var(--paper-3); border-radius: var(--r); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin: 1.2em 0; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  }
+}
+
+/* ---------- pied ---------- */
+.foot {
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 700;
+  transition: transform 0.15s ease;
+
+  &:active { transform: scale(0.96); }
+
+  &.ghost {
+    background: transparent;
+    color: var(--ink-2);
+    border: 1px solid var(--rule-strong);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.legal {
+  margin-top: 14px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+  max-width: 52ch;
+}
+
+/* ---------- autres sources ---------- */
+.others {
+  margin-top: 36px;
+
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+}
+
+.other {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  transition: transform 0.15s ease;
+
+  &:active { transform: translateX(4px); }
+}
+
+.o-title { font-weight: 600; line-height: 1.3; }
+.o-source { font-size: 0.8rem; color: var(--ink-3); }
+
+/* ---------- états ---------- */
+.state {
+  padding: 60px 0 0;
+
+  h2 { font-size: 2rem; margin-bottom: 10px; }
+  p { color: var(--ink-2); max-width: 44ch; }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* ---------- squelette ---------- */
+.sk-wrap { padding-top: 8px; }
+
+.sk {
+  border-radius: 8px;
+  background: linear-gradient(100deg, var(--paper-3) 30%, var(--paper-2) 50%, var(--paper-3) 70%);
+  background-size: 220% 100%;
+  animation: shimmer 1.4s infinite;
+  margin-bottom: 12px;
+}
+
+.sk-img { aspect-ratio: 16 / 10; border-radius: var(--r-lg); margin-bottom: 18px; }
+.sk-h { height: 34px; width: 92%; }
+.sk-h.short { width: 60%; margin-bottom: 16px; }
+.sk-meta { height: 14px; width: 40%; margin-bottom: 28px; }
+.sk-p { height: 16px; width: 100%; }
+.sk-p.short { width: 70%; margin-bottom: 24px; }
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}

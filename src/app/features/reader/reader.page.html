@@ -1,0 +1,80 @@
+<div class="page reader" appScrolled #s="scrolled" [threshold]="120">
+
+  <div class="topbar" [class.raised]="s.scrolled()">
+    <button class="icon-btn" (click)="back()" aria-label="Retour">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <span class="topbar-title">{{ article()?.siteName ?? state.source?.source ?? 'Article' }}</span>
+    <button class="icon-btn" (click)="share()" aria-label="Partager">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7h16v-7M12 3v12M8 7l4-4 4 4"/></svg>
+    </button>
+    <button class="icon-btn" (click)="openSite()" aria-label="Ouvrir sur le site">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="sk-wrap" aria-busy="true">
+      <div class="sk sk-img"></div>
+      <div class="sk sk-h"></div>
+      <div class="sk sk-h short"></div>
+      <div class="sk sk-meta"></div>
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <div class="sk sk-p" [class.short]="i % 3 === 0"></div>
+      }
+    </div>
+  } @else if (error()) {
+    <div class="state">
+      <h2 class="display">Pas de mode épuré ici.</h2>
+      <p>{{ error() }} Tu peux l'ouvrir sur le site, c'est tout aussi bien.</p>
+      <div class="row">
+        <button class="cta" (click)="openSite()">Ouvrir sur {{ state.source?.source ?? 'le site' }}</button>
+        <button class="cta ghost" (click)="retry()">Réessayer</button>
+      </div>
+    </div>
+  } @else if (article(); as a) {
+    <article class="article">
+      @if (heroImage(); as img) {
+        <figure class="hero">
+          <img [src]="img" alt="" loading="eager" decoding="async" (error)="onHeroError()" />
+        </figure>
+      }
+
+      @if (category(); as cat) {
+        <span class="kicker" [style.--cat]="cat.color">{{ cat.label }}</span>
+      }
+      <h1 class="display title">{{ a.title }}</h1>
+      <p class="meta">
+        <span class="site">{{ a.siteName }}</span>
+        @if (a.byline) { <span class="sep">·</span><span>{{ a.byline }}</span> }
+        <span class="sep">·</span><span>{{ readingLabel() }}</span>
+      </p>
+
+      <div class="prose" [innerHTML]="a.html"></div>
+
+      <footer class="foot">
+        <button class="cta" (click)="openSite()">
+          Lire l'original sur {{ a.siteName }}
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+        </button>
+        <p class="legal">Article de {{ a.siteName }}, affiché en mode lecture. Tous droits réservés à l'éditeur.</p>
+      </footer>
+    </article>
+
+    @if (otherSources().length) {
+      <section class="others">
+        <h2>Sur le même sujet</h2>
+        <ul>
+          @for (src of otherSources(); track src.url) {
+            <li>
+              <button class="other" (click)="readOther(src)">
+                <span class="o-title">{{ src.title }}</span>
+                <span class="o-source">{{ src.source }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+</div>
