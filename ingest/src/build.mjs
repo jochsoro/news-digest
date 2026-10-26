@@ -192,7 +192,13 @@ async function fetchOgImage(url) {
 
 const round = (n) => Math.round(n * 100) / 100;
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+main()
+  .then(() => {
+    // Sortie explicite : des sockets gardées ouvertes par des serveurs lents
+    // peuvent sinon maintenir le processus en vie après la fin du travail.
+    process.exit(0);
+  })
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

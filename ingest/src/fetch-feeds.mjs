@@ -102,7 +102,7 @@ async function fetchOne(feed, fixture) {
 
     out.push({
       id: hash(url),
-      title: stripAgencyMarks(title),
+      title: stripAgencyMarks(stripSourceSuffix(title, feed)),
       summary: stripAgencyMarks(excerpt(item)),
       url,
       source: sourceName(item, feed),
@@ -174,6 +174,12 @@ function excerpt(item) {
     t = end > 120 ? cut.slice(0, end + 1) : cut.trimEnd() + '…';
   }
   return t;
+}
+
+/** Google News écrit « Titre - Média » : le média part dans `source`, pas dans le titre. */
+function stripSourceSuffix(title, feed) {
+  if (feed.source !== 'Google News') return title;
+  return title.replace(/\s[-–—]\s[^-–—]{2,60}$/, '').trim();
 }
 
 /** Google News et consorts mettent le média d'origine dans <source>. */
