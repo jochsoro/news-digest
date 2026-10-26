@@ -42,14 +42,19 @@ async function main() {
   const feeds = await loadFeeds(FIXTURE);
   log(`${feeds.length} flux à lire`);
 
+  const t0 = Date.now();
   const { articles, failures } = await fetchAll(feeds, { fixture: FIXTURE });
-  log(`${articles.length} articles collectés, ${failures.length} flux en échec`);
+  log(`${articles.length} articles collectés, ${failures.length} flux en échec (${Math.round((Date.now() - t0) / 1000)} s)`);
 
   const buckets = group(articles, taxonomy);
 
   // Manchettes sans visuel : on résout les og:image en parallèle, une fois,
   // avant d'assembler les éditions (sinon chaque région attend ses timeouts).
-  if (!FIXTURE) await resolveLeadImages(buckets, taxonomy);
+  if (!FIXTURE) {
+    const t1 = Date.now();
+    await resolveLeadImages(buckets, taxonomy);
+    log(`og:image résolues en ${Math.round((Date.now() - t1) / 1000)} s`);
+  }
 
   const published = [];
   const stats = { llm: 0, extractive: 0 };

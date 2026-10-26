@@ -8,6 +8,8 @@ import { readFile } from 'node:fs/promises';
 import { log } from './util.mjs';
 
 const TIMEOUT_MS = 12_000;
+/** Plafond absolu par flux, quoi qu'il arrive côté réseau (serveur qui goutte, DNS lent…). */
+const HARD_TIMEOUT_MS = 20_000;
 const CONCURRENCY = 8;
 /** Au-delà, un article est trop vieux pour une édition « du jour ». */
 const MAX_AGE_HOURS = 36;
@@ -85,7 +87,7 @@ export async function fetchAll(feeds, { fixture = false } = {}) {
 async function fetchOne(feed, fixture) {
   const parsed = fixture
     ? await parser.parseString(await readFile(new URL(`../fixtures/${feed.url.replace('fixture:', '')}.xml`, import.meta.url), 'utf8'))
-    : await parser.parseURL(feed.url);
+    : await withHardTimeout(parser.parseURL(feed.url), HARD_TIMEOUT_MS, feed.url);
 
   const cutoff = Date.now() - MAX_AGE_HOURS * 3_600_000;
   const out = [];
@@ -112,6 +114,15 @@ async function fetchOne(feed, fixture) {
     });
   }
   return out;
+}
+
+/** Abandonne une promesse qui dépasse `ms` : un flux ne doit jamais bloquer l'édition. */
+function withHardTimeout(promise, ms, label) {
+  let timer;
+  const guard = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`délai dépassé (${ms / 1000} s) : ${label}`)), ms);
+  });
+  return Promise.race([promise, guard]).finally(() => clearTimeout(timer));
 }
 
 // ---------- normalisation ----------
