@@ -1,0 +1,170 @@
+.head {
+  padding: 6px 0 6px;
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px;
+  font-size: 0.9rem;
+  color: var(--ink-3);
+}
+
+.crumb {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.current {
+  font-size: clamp(2.6rem, 12vw, 3.6rem);
+  margin-top: 6px;
+  view-transition-name: region-title;
+}
+
+.pick-current {
+  width: 100%;
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--r-lg);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: left;
+  transition: transform 0.15s ease, background 0.2s ease;
+
+  &:active { transform: scale(0.98); }
+
+  &.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+
+.pc-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.18);
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.level {
+  margin: 28px 0 8px;
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--rule);
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+
+  &:last-child { border-bottom: 1px solid var(--rule); }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.item-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0;
+  text-align: left;
+  min-width: 0;
+  transition: transform 0.15s ease;
+
+  &:active { transform: translateX(4px); }
+}
+
+.glyph {
+  font-size: 1.6rem;
+  line-height: 1;
+  width: 36px;
+  text-align: center;
+}
+
+/* Les continents en gros, les pays/villes plus sobres */
+.name {
+  flex: 1;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-size: 1.15rem;
+}
+
+[data-level='world'] .name {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.item.active .name { color: var(--accent); }
+
+.chev {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.item-pick {
+  width: 44px;
+  margin: 10px 0 10px 8px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-2);
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
+
+  &:active { transform: scale(0.9); }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .item.active & {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+}

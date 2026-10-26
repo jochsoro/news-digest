@@ -1,0 +1,232 @@
+/* ============================================================
+   News Digest — design tokens « édition du matin »
+   Le thème est résolu par ThemeService → <html data-theme data-text>
+   ============================================================ */
+
+:root {
+  --paper: #eef0f3;
+  --paper-2: #ffffff;
+  --paper-3: #e2e5ea;
+  --ink: #14161c;
+  --ink-2: #4a5160;
+  --ink-3: #8a909c;
+  --rule: rgba(20, 22, 28, 0.1);
+  --rule-strong: rgba(20, 22, 28, 0.22);
+  --shadow: 0 10px 30px rgba(10, 12, 20, 0.14);
+
+  /* L'accent est injecté par ThemeService ; valeurs de repli */
+  --accent: #2e5bff;
+  --accent-ink: #ffffff;
+  --accent-wash: rgba(46, 91, 255, 0.1);
+
+  --cat-general: #14161c;
+  --cat-world: #2f6b8f;
+  --cat-geopolitics: #6d5aa6;
+  --cat-business: #1f7a5c;
+  --cat-technology: #2e5bff;
+  --cat-science: #0e8594;
+  --cat-discovery: #b86a1e;
+  --cat-health: #c2415a;
+  --cat-sports: #2b8a3e;
+  --cat-environment: #4f8a2f;
+  --cat-culture: #a0479a;
+  --cat-entertainment: #cc7a1a;
+
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-text: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --text-scale: 1;
+  --r: 10px;
+  --r-lg: 20px;
+  --nav-h: 60px;
+  /* Largeur du rail d'onglets latéral ; 0 tant qu'on est en barre basse. */
+  --rail-w: 0px;
+  --bar-h: 52px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+  /* Bord droit réservé par le système (colonne de l'iPhone Duo fermé).
+     iOS l'expose en safe-area ; --side-r est la mesure du plugin natif,
+     pour le cas où la bande vit hors de la fenêtre. */
+  --side-r: 0px;
+  --safe-r: max(env(safe-area-inset-right, 0px), var(--side-r));
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --paper: #0c0f15;
+  --paper-2: #151924;
+  --paper-3: #1e2431;
+  --ink: #f2f3f6;
+  --ink-2: #aab0bd;
+  --ink-3: #6b7280;
+  --rule: rgba(242, 243, 246, 0.1);
+  --rule-strong: rgba(242, 243, 246, 0.24);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --cat-general: #f2f3f6;
+  color-scheme: dark;
+}
+
+:root[data-text='s'] { --text-scale: 0.92; }
+:root[data-text='l'] { --text-scale: 1.12; }
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; height: 100%; }
+
+html {
+  font-size: calc(16px * var(--text-scale));
+  background: var(--paper);
+  transition: background 0.3s ease;
+}
+
+body {
+  font-family: var(--font-text);
+  font-size: 1rem;
+  line-height: 1.5;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, p { margin: 0; }
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a { color: inherit; text-decoration: none; }
+
+input, select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  font-variation-settings: 'opsz' 96;
+}
+
+.page {
+  padding: 0 calc(20px + var(--rail-w) + var(--safe-r)) calc(var(--nav-h) + var(--safe-b) + 28px) 20px;
+  max-width: calc(640px + var(--rail-w) + var(--safe-r));
+  margin: 0 auto;
+}
+
+/* ---------- écrans larges : les onglets passent sur le côté ----------
+   iPad, iPhone pliant déplié, paysage large : une barre basse traverserait
+   tout l'écran pour deux onglets. On bascule sur un rail vertical collé au
+   bord droit, à portée du pouce, et le contenu réserve sa largeur. */
+@media (min-width: 700px) {
+  :root {
+    --nav-h: 0px;
+    --rail-w: 104px;
+  }
+}
+
+/* ---------- barre compacte figée (apparaît au scroll) ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  margin: 0 calc(-20px - var(--rail-w) - var(--safe-r)) 0 -20px;
+  padding: var(--safe-t) calc(20px + var(--rail-w) + var(--safe-r)) 0 20px;
+  height: calc(var(--bar-h) + var(--safe-t));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.25s ease;
+
+  &.raised { border-bottom-color: var(--rule); }
+}
+
+.topbar-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: 1.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  .topbar.raised & {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--ink-2);
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--paper-2) 60%, transparent);
+  transition: transform 0.15s ease;
+
+  &:active { transform: scale(0.92); }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+/* ---------- utilitaires partagés ---------- */
+.rise {
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms + 60ms);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Transitions de pages (View Transitions API) */
+::view-transition-old(root) { animation: vt-out 0.22s ease both; }
+::view-transition-new(root) { animation: vt-in 0.32s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }

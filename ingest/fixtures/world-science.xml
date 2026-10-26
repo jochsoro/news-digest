@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Fixture Science</title>
+<entry><title>Une équipe publie un matériau supraconducteur à plus haute température</title><link href="https://example.test/sci/supra"/><updated>2026-10-26T21:32:25Z</updated>
+<summary>Les résultats restent à reproduire par d'autres laboratoires.</summary></entry>
+<entry><title>La sonde Europa Clipper envoie ses premières images</title><link href="https://example.test/sci/europa"/><updated>2026-10-26T21:32:25Z</updated>
+<summary>Les clichés montrent la surface glacée de la lune de Jupiter.</summary></entry>
+</feed>

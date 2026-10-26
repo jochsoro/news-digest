@@ -1,0 +1,124 @@
+<div class="page" appScrolled #s="scrolled" [threshold]="60">
+  <div class="topbar" [class.raised]="s.scrolled()">
+    <a routerLink="/profile" class="icon-btn" aria-label="Retour au profil">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </a>
+    <span class="topbar-title">Réglages</span>
+  </div>
+
+  <header class="head">
+    <h1 class="display">Réglages</h1>
+    <p class="sub">Votre édition, à votre rythme.</p>
+  </header>
+
+  <!-- Apparence -->
+  <section class="group rise" style="--i: 0">
+    <h2 class="group-title">Apparence</h2>
+
+    <div class="seg">
+      @for (t of themes; track t.value) {
+        <button class="seg-btn" [class.on]="prefs().theme === t.value" (click)="setTheme(t.value)">
+          {{ t.label }}
+        </button>
+      }
+    </div>
+
+    <div class="line">
+      <span class="line-text">
+        <span class="line-label">Couleur d'accent</span>
+        <span class="line-hint">{{ accents.find(a => a.id === prefs().accent)?.label }}</span>
+      </span>
+      <div class="swatches" role="radiogroup" aria-label="Couleur d'accent">
+        @for (a of accents; track a.id) {
+          <button
+            class="swatch"
+            [class.on]="prefs().accent === a.id"
+            [style.--sw]="a.light"
+            [style.--sw-dark]="a.dark"
+            (click)="setAccent(a.id)"
+            role="radio"
+            [attr.aria-checked]="prefs().accent === a.id"
+            [attr.aria-label]="a.label"
+          ></button>
+        }
+      </div>
+    </div>
+
+    <div class="line">
+      <span class="line-text">
+        <span class="line-label">Taille du texte</span>
+      </span>
+      <div class="seg mini">
+        @for (t of textSizes; track t.value) {
+          <button class="seg-btn" [class]="'seg-btn size-' + t.value" [class.on]="prefs().textSize === t.value" (click)="setTextSize(t.value)" [attr.aria-label]="'Taille ' + t.value">
+            {{ t.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="line">
+      <span class="line-text">
+        <span class="line-label">Retour haptique</span>
+        <span class="line-hint">Petite vibration sur les interactions</span>
+      </span>
+      <button class="switch" [class.on]="prefs().haptics" (click)="toggleHaptics()" role="switch" [attr.aria-checked]="prefs().haptics" aria-label="Retour haptique">
+        <span class="knob"></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Lecture -->
+  <section class="group rise" style="--i: 1">
+    <h2 class="group-title">Lecture</h2>
+
+    <div class="seg">
+      @for (l of languages; track l.code) {
+        <button class="seg-btn" [class.on]="prefs().language === l.code" (click)="setLanguage(l.code)">
+          {{ l.label }}
+        </button>
+      }
+    </div>
+
+    <div class="stack">
+      @for (opt of lengths; track opt.value) {
+        <button class="opt" [class.on]="prefs().digestLength === opt.value" (click)="setLength(opt.value)">
+          <span class="opt-text">
+            <span class="opt-label">{{ opt.label }}</span>
+            <span class="opt-hint">{{ opt.hint }}</span>
+          </span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Édition quotidienne -->
+  <section class="group rise" style="--i: 2">
+    <h2 class="group-title">Édition quotidienne</h2>
+    <div class="stack">
+      <div class="line">
+        <span class="line-text">
+          <span class="line-label">Me prévenir chaque matin</span>
+          <span class="line-hint">Une notification quand l'édition est prête</span>
+        </span>
+        <button class="switch" [class.on]="prefs().notificationsEnabled" (click)="toggleNotifications()" role="switch" [attr.aria-checked]="prefs().notificationsEnabled" aria-label="Notification quotidienne">
+          <span class="knob"></span>
+        </button>
+      </div>
+
+      <label class="line" [class.muted]="!prefs().notificationsEnabled" for="digestTime">
+        <span class="line-text"><span class="line-label">Heure de parution</span></span>
+        <input id="digestTime" type="time" [value]="prefs().digestTime" (change)="setTime($event)" [disabled]="!prefs().notificationsEnabled" />
+      </label>
+    </div>
+  </section>
+
+  <!-- Réinitialisation -->
+  <section class="group rise" style="--i: 3">
+    <button class="reset" (click)="resetAll()" [class.done]="resetDone()">
+      {{ resetDone() ? 'Réglages rétablis' : 'Rétablir les réglages par défaut' }}
+    </button>
+    <p class="foot">Vos préférences restent sur cet appareil. La région et le profil sont conservés.</p>
+  </section>
+</div>

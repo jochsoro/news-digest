@@ -1,0 +1,82 @@
+# Édition quotidienne — fabrique les digests et les publie sur la branche `digests`,
+# servie telle quelle par GitHub Pages (ou Cloudflare Pages) : zéro serveur.
+#
+# Prérequis une seule fois :
+#   1. Settings → Secrets → Actions : GEMINI_API_KEY (facultatif : sans clé, résumé extractif)
+#   2. Settings → Pages : Source = Deploy from a branch, Branch = digests, Folder = / (root)
+#      → l'édition est alors servie sur https://<user>.github.io/<repo>/digests/<regionId>/latest.json
+#   3. Settings → Actions → General → Workflow permissions : Read and write
+#
+# Déclenchement manuel possible depuis l'onglet Actions (« Run workflow ») pour tester.
+
+name: Édition du jour
+
+on:
+  schedule:
+    # 04:30 UTC = 05:30 Paris en hiver (06:30 en été). Les crons GitHub tournent en UTC
+    # et peuvent avoir quelques minutes de retard aux heures pleines : on vise la demie.
+    - cron: '30 4 * * *'
+    # Édition de la mi-journée (facultatif : commente pour ne garder que le matin).
+    - cron: '30 11 * * *'
+  workflow_dispatch:
+    inputs:
+      fixture:
+        description: 'Mode fixture (flux de test, sans réseau)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: digest
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ingest/package-lock.json
+
+      - name: Dépendances
+        working-directory: ingest
+        run: npm ci
+
+      - name: Fabrication des éditions
+        working-directory: ingest
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+          DIGEST_FIXTURE: ${{ inputs.fixture && '1' || '' }}
+        run: npm run build
+
+      - name: Récapitulatif
+        run: |
+          echo "## Éditions publiées" >> "$GITHUB_STEP_SUMMARY"
+          node -e '
+            const i = require("./ingest/out/index.json");
+            console.log(`Date : ${i.date} — ${i.regions.length} régions — ${i.failures} flux en échec\n`);
+            console.log("| Région | Blocs | Méthode |\n|---|---|---|");
+            for (const r of i.regions) console.log(`| ${r.name} | ${r.blocks} | ${r.method} |`);
+          ' >> "$GITHUB_STEP_SUMMARY"
+
+      # Publie `ingest/out` à la racine de la branche `digests`.
+      # keep_files : les éditions des jours précédents restent accessibles par date.
+      - name: Publication
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: digests
+          publish_dir: ./ingest/out
+          keep_files: true
+          enable_jekyll: false
+          user_name: 'news-digest-bot'
+          user_email: 'news-digest-bot@users.noreply.github.com'
+          commit_message: 'Édition du jour'

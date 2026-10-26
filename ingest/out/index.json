@@ -1,0 +1,163 @@
+{
+  "date": "2026-10-26",
+  "generatedAt": "2026-10-26T21:38:14.220Z",
+  "regions": [
+    {
+      "regionId": "world",
+      "name": "Monde",
+      "blocks": 10,
+      "method": "extractive"
+    },
+    {
+      "regionId": "africa",
+      "name": "Afrique",
+      "blocks": 4,
+      "method": "extractive"
+    },
+    {
+      "regionId": "europe",
+      "name": "Europe",
+      "blocks": 8,
+      "method": "extractive"
+    },
+    {
+      "regionId": "americas",
+      "name": "Amériques",
+      "blocks": 2,
+      "method": "extractive"
+    },
+    {
+      "regionId": "asia",
+      "name": "Asie",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "oceania",
+      "name": "Océanie",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "ci",
+      "name": "Côte d'Ivoire",
+      "blocks": 4,
+      "method": "extractive"
+    },
+    {
+      "regionId": "sn",
+      "name": "Sénégal",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "ng",
+      "name": "Nigéria",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "ma",
+      "name": "Maroc",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "ci-abidjan",
+      "name": "Abidjan",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "ci-bouake",
+      "name": "Bouaké",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "fr",
+      "name": "France",
+      "blocks": 8,
+      "method": "extractive"
+    },
+    {
+      "regionId": "gb",
+      "name": "Royaume-Uni",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "de",
+      "name": "Allemagne",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "es",
+      "name": "Espagne",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "fr-paris",
+      "name": "Paris",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "fr-lyon",
+      "name": "Lyon",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "fr-rennes",
+      "name": "Rennes",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "us",
+      "name": "États-Unis",
+      "blocks": 2,
+      "method": "extractive"
+    },
+    {
+      "regionId": "br",
+      "name": "Brésil",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "ca",
+      "name": "Canada",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "cn",
+      "name": "Chine",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "jp",
+      "name": "Japon",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "in",
+      "name": "Inde",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "au",
+      "name": "Australie",
+      "blocks": 1,
+      "method": "extractive"
+    }
+  ],
+  "failures": 16
+}

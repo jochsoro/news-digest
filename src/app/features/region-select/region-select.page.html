@@ -1,0 +1,73 @@
+<div class="page" appScrolled #s="scrolled" [threshold]="70">
+  <div class="topbar" [class.raised]="s.scrolled()">
+    @if (current().parentId) {
+      <button class="icon-btn" (click)="goTo(current().parentId!)" aria-label="Niveau précédent">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+    } @else {
+      <a routerLink="/" class="icon-btn" aria-label="Retour aux actus">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </a>
+    }
+    <span class="topbar-title">{{ current().name }}</span>
+  </div>
+
+  <header class="head">
+    <nav class="crumbs" aria-label="Fil d'Ariane">
+      @for (crumb of breadcrumb(); track crumb.id; let last = $last) {
+        @if (!last) {
+          <button class="crumb" (click)="goTo(crumb.id)">{{ crumb.name }}</button>
+          <span class="sep" aria-hidden="true">/</span>
+        }
+      }
+    </nav>
+
+    <h1 class="display current">{{ current().name }}</h1>
+
+    <button class="pick-current" [class.active]="activeId() === current().id" (click)="select(current())">
+      <span class="pc-text">
+        @if (activeId() === current().id) {
+          Édition actuelle
+        } @else if (current().level === 'city') {
+          Lire l'édition de {{ current().name }}
+        } @else {
+          Lire l'édition de toute la zone
+        }
+      </span>
+      <span class="pc-mark">
+        @if (activeId() === current().id) {
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
+        } @else {
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        }
+      </span>
+    </button>
+  </header>
+
+  @if (children().length) {
+    <p class="level">{{ levelLabel[current().level] }}</p>
+
+    <ul class="list" [attr.data-level]="current().level">
+      @for (child of children(); track child.id; let i = $index) {
+        <li class="item" [style.--i]="i" [class.active]="activeId() === child.id">
+          <button class="item-main" (click)="hasChildren(child.id) ? drillInto(child) : select(child)">
+            <span class="glyph">{{ child.flag }}</span>
+            <span class="name">{{ child.name }}</span>
+            @if (hasChildren(child.id)) {
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            }
+          </button>
+          @if (hasChildren(child.id)) {
+            <button class="item-pick" (click)="select(child)" [attr.aria-label]="'Lire l\'édition : ' + child.name">
+              @if (activeId() === child.id) {
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
+              } @else {
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              }
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>

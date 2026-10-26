@@ -1,0 +1,98 @@
+<div class="stage">
+
+  <!-- en-tête fixe : progression + région + filtres -->
+  <header class="top">
+    <div class="progress" aria-hidden="true">
+      @for (b of blocks(); track b.category; let i = $index) {
+        <span class="seg" [class.done]="i < current()" [class.now]="i === current()"></span>
+      }
+    </div>
+    <div class="top-row">
+      <a routerLink="/regions" class="where">
+        <span class="where-name">{{ region()?.name ?? 'Monde' }}</span>
+        <span class="where-date">
+          {{ dateShort }}
+          @if (fromCache()) {
+            <span class="badge">hors ligne</span>
+          } @else if (editionLabel()) {
+            <span class="badge">édition du {{ editionLabel() }}</span>
+          }
+        </span>
+      </a>
+      <div class="top-actions">
+        <button class="pill" [class.on]="activeFilterCount() > 0" (click)="toggleFilters()" aria-label="Thèmes">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          Thèmes
+          @if (activeFilterCount()) {
+            <span class="count">{{ activeFilterCount() }}</span>
+          }
+        </button>
+        <button class="round" [class.spinning]="loading()" (click)="refresh()" aria-label="Rafraîchir">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- feuille des thèmes -->
+  @if (filtersOpen()) {
+    <button class="scrim" (click)="toggleFilters()" aria-label="Fermer"></button>
+    <div class="sheet" role="dialog" aria-label="Choisir les thèmes">
+      <span class="grip"></span>
+      <h2>Vos thèmes</h2>
+      <p>Choisissez ce qui entre dans votre édition. Rien de coché = tout.</p>
+      <app-category-filter
+        [selected]="prefs().selectedCategories"
+        (toggled)="onToggleCategory($event)"
+        (cleared)="onClearCategories()"
+      />
+      <button class="sheet-done" (click)="toggleFilters()">Voir l'édition</button>
+    </div>
+  }
+
+  <!-- feed -->
+  @if (loading()) {
+    <div class="state dark">
+      <div class="sk-blob"></div>
+      <div class="sk-text">
+        <span class="sk sk-chip"></span>
+        <span class="sk sk-h"></span>
+        <span class="sk sk-h short"></span>
+        <span class="sk sk-p"></span>
+      </div>
+    </div>
+  } @else if (error()) {
+    <div class="state dark center">
+      <h2 class="display">Pas d'édition pour l'instant.</h2>
+      <p>{{ error() }}</p>
+      <button class="cta" (click)="refresh()">Réessayer</button>
+    </div>
+  } @else if (total() === 0) {
+    <div class="state dark center">
+      <h2 class="display">Vous avez tout vu.</h2>
+      <p>L'édition reviendra demain matin. En attendant, vous pouvez la relire ou élargir vos thèmes.</p>
+      <div class="row">
+        <button class="cta" (click)="restart()">Relire l'édition</button>
+        <button class="cta ghost" (click)="toggleFilters()">Thèmes</button>
+      </div>
+    </div>
+  } @else {
+    <div class="feed" #feed (scroll)="onFeedScroll()">
+      @for (block of blocks(); track block.category; let i = $index) {
+        <app-news-card
+          [block]="block"
+          [index]="i"
+          [total]="total()"
+          [nextLabel]="labelOf(blocks()[i + 1])"
+          [isSaved]="savedSet().has(block.category)"
+          [active]="current() === i"
+          (opened)="onOpened($event)"
+          (saved)="onSaved($event)"
+          (shared)="onShared($event)"
+          (passed)="onPassed($event)"
+          (lessOfThis)="onLessOfThis($event)"
+        />
+      }
+    </div>
+  }
+</div>

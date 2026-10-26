@@ -1,0 +1,95 @@
+@let m = meta();
+@let p = palette();
+@let b = block();
+
+<section
+  class="screen"
+  [style.--a]="p.a"
+  [style.--b]="p.b"
+  [style.--chip]="p.chip"
+  [style.--chip-ink]="p.chipInk"
+  [attr.aria-label]="m?.label"
+>
+  <!-- fond immersif : photo de l'article si elle existe, sinon couleurs du thème -->
+  <div class="bg" [class.has-photo]="photo() !== null" [class.ready]="imageReady()">
+    @if (photo(); as img) {
+      <span class="photo-wrap" [class.live]="dragging()" [style.transform]="'translate3d(' + parallax() + 'px, 0, 0)'">
+        <img
+          class="photo"
+          [src]="img.url"
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+          [attr.loading]="index() < 2 ? 'eager' : 'lazy'"
+          [attr.fetchpriority]="index() === 0 ? 'high' : 'auto'"
+          (load)="onImageLoad()"
+          (error)="onImageError()"
+        />
+      </span>
+      <span class="tint"></span>
+    } @else {
+      <span class="blob blob-a"></span>
+      <span class="blob blob-b"></span>
+    }
+    <span class="veil"></span>
+  </div>
+
+  <!-- carte glissable -->
+  <article
+    class="card"
+    [class.dragging]="dragging()"
+    [class.leaving]="leaving() !== null"
+    [style.transform]="'translateX(' + dx() + 'px) rotate(' + rotate() + 'deg)'"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp()"
+    (pointercancel)="onPointerUp()"
+  >
+    <!-- badges d'intention -->
+    <span class="stamp pass" [style.opacity]="intent() === 'pass' ? intentStrength() : 0">Passer</span>
+    <span class="stamp keep" [style.opacity]="intent() === 'keep' ? intentStrength() : 0">Garder</span>
+
+    <div class="content">
+      <span class="chip">
+        <span class="chip-dot"></span>{{ m?.label }}
+      </span>
+      <h1 class="headline">{{ lede() }}</h1>
+      @if (rest()) {
+        <p class="body">{{ rest() }}</p>
+      }
+      <div class="actions">
+        @if (primarySource(); as src) {
+          <a class="source" [href]="src.url" target="_blank" rel="noopener noreferrer" (click)="opened.emit(b)">
+            Lire sur {{ src.source }}
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+          </a>
+        }
+        <button class="act" [class.on]="isSaved()" (click)="keep()" [attr.aria-label]="isSaved() ? 'Gardé' : 'Garder'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16l-6-4-6 4z"/></svg>
+        </button>
+        <button class="act" (click)="shared.emit(b)" aria-label="Partager">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7h16v-7M12 3v12M8 7l4-4 4 4"/></svg>
+        </button>
+        <button class="act" (click)="lessOfThis.emit(b)" aria-label="Moins de ce thème">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 4.2A10 10 0 0 1 21 12a10 10 0 0 1-1.5 2.5M6.5 6.5A10 10 0 0 0 3 12a10 10 0 0 0 14 5.5"/></svg>
+        </button>
+      </div>
+      @if (extraSources()) {
+        <span class="more">+ {{ extraSources() }} autre{{ extraSources() > 1 ? 's' : '' }} source{{ extraSources() > 1 ? 's' : '' }}</span>
+      }
+      @if (photo()?.credit; as credit) {
+        <span class="credit">{{ credit }}</span>
+      }
+    </div>
+  </article>
+
+  <!-- indication de la suite -->
+  <div class="next">
+    @if (nextLabel()) {
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
+      <span>Suivant : {{ nextLabel() }}</span>
+    } @else {
+      <span>Fin de l'édition</span>
+    }
+  </div>
+</section>

@@ -1,0 +1,18 @@
+<div class="filter-row" role="group" aria-label="Thèmes">
+  <button class="fchip" [class.on]="selected().length === 0" (click)="cleared.emit()">
+    Tout
+  </button>
+
+  @for (c of categories; track c.id) {
+    <button
+      class="fchip"
+      [class.on]="isSelected(c.id)"
+      [style.--cat]="c.color"
+      (click)="toggled.emit(c.id)"
+      [attr.aria-pressed]="isSelected(c.id)"
+    >
+      <span class="pip"></span>
+      {{ c.label }}
+    </button>
+  }
+</div>

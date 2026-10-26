@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel><title>Fixture Sport</title>
+<item><title>Les Éléphants en stage à Abidjan avant les qualifications</title><link>https://example.test/ci/elephants</link><pubDate>2026-10-26T21:32:25Z</pubDate>
+<description>La sélection se réunit cette semaine. Deux nouveaux joueurs sont appelés.</description>
+<content:encoded xmlns:content="http://purl.org/rss/1.0/modules/content/"><![CDATA[<p><img src="https://example.test/img/elephants.jpg"/>La sélection se réunit.</p>]]></content:encoded></item>
+<item><title>Ligue 1 ivoirienne : l'ASEC reprend la tête</title><link>https://example.test/ci/asec</link><pubDate>2026-10-26T21:32:25Z</pubDate>
+<description>Victoire 2-0 ce dimanche.</description></item>
+</channel></rss>

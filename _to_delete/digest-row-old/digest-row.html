@@ -1,0 +1,46 @@
+@let m = meta();
+@let b = block();
+
+<article class="row" [style.--cat]="m?.color">
+  @if (featured()) {
+    <p class="kicker"><span class="dot"></span>{{ m?.label }}</p>
+    <h2 class="headline display">{{ lede() }}</h2>
+    @if (rest()) {
+      <p class="body">{{ rest() }}</p>
+    }
+  } @else {
+    <button class="row-head" (click)="toggled.emit()" [attr.aria-expanded]="expanded()">
+      <span class="dot"></span>
+      <span class="row-text">
+        <span class="row-cat">{{ m?.label }}</span>
+        <span class="row-title">{{ lede() }}</span>
+      </span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+
+    @if (expanded() && rest()) {
+      <p class="body">{{ rest() }}</p>
+    }
+  }
+
+  @if (featured() || expanded()) {
+    <div class="detail">
+      @if (b.sources.length) {
+        <ul class="sources">
+          @for (s of b.sources; track s.url) {
+            <li>
+              <a [href]="s.url" target="_blank" rel="noopener noreferrer" (click)="opened.emit(b)">
+                <span class="src-title">{{ s.title }}</span>
+                <span class="src-name">{{ s.source }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+      <div class="actions">
+        <button class="act" (click)="saved.emit(b)">Garder</button>
+        <button class="act quiet" (click)="dismissed.emit(b)">Moins de {{ m?.label?.toLowerCase() }}</button>
+      </div>
+    </div>
+  }
+</article>

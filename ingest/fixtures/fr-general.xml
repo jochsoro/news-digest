@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title>Fixture FR</title>
+<item><title>Budget : le gouvernement présente son projet de loi de finances</title><link>https://example.test/fr/plf</link><pubDate>2026-10-26T21:32:25Z</pubDate>
+<description>Le texte prévoit des économies et de nouvelles recettes. Le débat parlementaire s'ouvre la semaine prochaine.</description>
+<media:thumbnail url="https://example.test/img/assemblee.jpg"/></item>
+<item><title>SNCF : trafic perturbé sur l'axe Paris-Lyon</title><link>https://example.test/fr/sncf</link><pubDate>2026-10-26T21:32:25Z</pubDate>
+<description>Un incident technique ralentit les TGV ce matin.</description></item>
+<item><title>Météo : un épisode venteux attendu sur la façade ouest</title><link>https://example.test/fr/meteo</link><pubDate>2026-10-26T21:32:25Z</pubDate>
+<description>Vigilance jaune dans six départements.</description></item>
+</channel></rss>

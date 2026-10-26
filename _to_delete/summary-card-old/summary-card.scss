@@ -1,0 +1,103 @@
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--cat, var(--accent));
+  border-radius: var(--r-md);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--cat, var(--accent));
+  background: color-mix(in srgb, var(--cat, var(--accent)) 12%, transparent);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.chip-icon {
+  font-size: 0.9rem;
+}
+
+.summary {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.sources {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.source-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  padding: 8px 10px;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  transition: background 0.15s ease;
+
+  &:active {
+    background: color-mix(in srgb, var(--cat, var(--accent)) 10%, var(--surface-2));
+  }
+}
+
+.source-title {
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.source-name {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+
+.card-foot {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  padding: 4px 0;
+
+  &:active {
+    color: var(--accent);
+  }
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  &:active {
+    background: var(--surface-2);
+  }
+}

@@ -1,0 +1,199 @@
+.app-content {
+  min-height: 100dvh;
+}
+
+/* ============================================================
+   Barre d'onglets
+   Base commune, puis un habillage par plateforme :
+   iOS → verre liquide (translucide, reflet spéculaire, bord lumineux)
+   Android / web → surface Material (opaque, élévation, pilule pleine)
+   ============================================================ */
+.dock {
+  position: fixed;
+  left: calc(50% - var(--safe-r) / 2);
+  bottom: calc(var(--safe-b) + 12px);
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 999px;
+  z-index: 50;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow);
+}
+
+.dock-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+  font-weight: 600;
+  position: relative;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+
+  &:active { transform: scale(0.96); }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &.on {
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+
+/* Les sous-pages (réglages, régions) ont leur propre bouton retour : pas de dock. */
+:host:has(app-settings-page) .dock,
+:host:has(app-region-select-page) .dock {
+  display: none;
+}
+
+/* ---------- iOS : verre liquide ---------- */
+:host-context([data-platform='ios']) {
+  .dock {
+    /* Le verre : fond très translucide + flou saturé, ce qui laisse les
+       couleurs de l'écran traverser la barre comme un matériau réel. */
+    background: rgba(255, 255, 255, 0.18);
+    -webkit-backdrop-filter: blur(32px) saturate(190%) brightness(1.1);
+    backdrop-filter: blur(32px) saturate(190%) brightness(1.1);
+    border: 0.5px solid rgba(255, 255, 255, 0.4);
+    padding: 5px;
+    /* Reflet spéculaire : liseré clair en haut, ombre portée douce en bas. */
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+      0 10px 34px rgba(0, 0, 0, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.12);
+  }
+
+  .dock-item {
+    color: var(--ink);
+    font-weight: 600;
+
+    /* L'onglet actif est une lentille de verre plus claire, pas un bloc plein. */
+    &.on {
+      background: rgba(255, 255, 255, 0.42);
+      color: var(--ink);
+      -webkit-backdrop-filter: blur(8px) saturate(140%);
+      backdrop-filter: blur(8px) saturate(140%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.75),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    svg { stroke-width: 2; }
+  }
+}
+
+:host-context([data-platform='ios'][data-theme='dark']) {
+  .dock {
+    background: rgba(30, 34, 44, 0.42);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+      0 12px 38px rgba(0, 0, 0, 0.55);
+  }
+
+  .dock-item.on {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* ---------- Android : barre Material ---------- */
+:host-context([data-platform='android']) {
+  .dock {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  }
+
+  .dock-item.on {
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+
+/* ---------- Édition : fond sombre immersif ----------
+   Sur l'écran d'actus, la barre doit se poser sur la photo sans l'écraser.
+   iOS garde son verre (le flou prend les couleurs de l'image) ; les autres
+   plateformes passent en verre fumé. */
+:host:has(app-digest-page) .dock {
+  background: rgba(20, 22, 28, 0.55);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  border-color: rgba(255, 255, 255, 0.14);
+
+  .dock-item { color: rgba(255, 255, 255, 0.78); }
+  .dock-item.on { background: #fff; color: #0d0f14; }
+}
+
+:host-context([data-platform='ios']) {
+  &:has(app-digest-page) .dock {
+    background: rgba(255, 255, 255, 0.16);
+    -webkit-backdrop-filter: blur(34px) saturate(200%) brightness(1.15);
+    backdrop-filter: blur(34px) saturate(200%) brightness(1.15);
+    border-color: rgba(255, 255, 255, 0.34);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+      0 12px 38px rgba(0, 0, 0, 0.4);
+
+    .dock-item { color: #fff; }
+
+    .dock-item.on {
+      background: rgba(255, 255, 255, 0.9);
+      color: #0d0f14;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+  }
+}
+
+/* ---------- barre native iOS en place : le dock web s'effface ---------- */
+:host-context([data-native-tabs]) .dock {
+  display: none;
+}
+
+/* ---------- écrans larges : rail vertical au bord droit ----------
+   Même matériau par plateforme, autre géométrie : les onglets s'empilent,
+   icône au-dessus du libellé, et le rail reste centré verticalement. */
+@media (min-width: 700px) {
+  .dock {
+    left: auto;
+    right: calc(16px + var(--safe-r));
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 28px;
+  }
+
+  .dock-item {
+    flex-direction: column;
+    gap: 4px;
+    width: 72px;
+    height: 68px;
+    padding: 0;
+    border-radius: 22px;
+    font-size: 0.78rem;
+
+    svg { width: 22px; height: 22px; }
+  }
+
+}

@@ -1,0 +1,14 @@
+<main class="app-content">
+  <router-outlet />
+</main>
+
+<nav class="dock" aria-label="Navigation principale" (click)="haptics.select()">
+  <a routerLink="/" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: true }" class="dock-item">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z M8 9h8 M8 13h8 M8 17h5"/></svg>
+    <span>Actus</span>
+  </a>
+  <a routerLink="/profile" routerLinkActive="on" class="dock-item">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6"/></svg>
+    <span>Profil</span>
+  </a>
+</nav>

@@ -1,0 +1,19 @@
+{
+  "name": "news-digest-ingest",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Fabrique les \u00e9ditions quotidiennes de News Digest : flux RSS \u2192 r\u00e9sum\u00e9s \u2192 JSON statiques.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node src/build.mjs",
+    "build:fixture": "DIGEST_FIXTURE=1 node src/build.mjs",
+    "check-feeds": "node src/check-feeds.mjs",
+    "serve": "node src/serve.mjs"
+  },
+  "dependencies": {
+    "rss-parser": "^3.13.0"
+  }
+}

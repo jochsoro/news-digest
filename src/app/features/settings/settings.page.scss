@@ -1,0 +1,225 @@
+.head {
+  padding: 6px 0 8px;
+
+  h1 { font-size: clamp(2.6rem, 12vw, 3.6rem); }
+}
+
+.sub {
+  margin-top: 6px;
+  color: var(--ink-2);
+}
+
+.group {
+  margin-top: 30px;
+}
+
+.group-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: -0.015em;
+  margin-bottom: 12px;
+}
+
+/* Segmented */
+.seg {
+  display: flex;
+  margin-bottom: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--paper-3);
+}
+
+.seg-btn {
+  flex: 1;
+  height: 40px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--ink-2);
+  transition: background 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), color 0.2s ease;
+
+  &.on {
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+
+/* Lignes */
+.stack {
+  border-top: 1px solid var(--rule);
+}
+
+.opt,
+.line {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  transition: opacity 0.2s ease;
+
+  &.muted { opacity: 0.45; }
+}
+
+.opt-text,
+.line-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.opt-label,
+.line-label {
+  font-weight: 600;
+}
+
+.opt-hint,
+.line-hint {
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+
+.radio {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--rule-strong);
+  position: relative;
+  transition: border-color 0.2s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: scale(0);
+    transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1.4);
+  }
+}
+
+.opt.on .radio {
+  border-color: var(--accent);
+  &::after { transform: scale(1); }
+}
+
+/* Switch */
+.switch {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--paper-3);
+  position: relative;
+  transition: background 0.25s ease;
+
+  &.on { background: var(--accent); }
+}
+
+.knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1.2);
+
+  .switch.on & { transform: translateX(20px); }
+}
+
+input[type='time'] {
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  padding: 8px 12px;
+  color-scheme: light dark;
+}
+
+.foot {
+  margin-top: 28px;
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+
+/* Segmented mini (taille du texte) */
+.seg.mini {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 3px;
+
+  .seg-btn {
+    height: 34px;
+    width: 40px;
+    flex: 0 0 auto;
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+
+  .size-s { font-size: 0.8rem; }
+  .size-m { font-size: 1rem; }
+  .size-l { font-size: 1.25rem; }
+}
+
+/* Pastilles d'accent */
+.swatches {
+  display: flex;
+  gap: 10px;
+}
+
+.swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--sw);
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1.4);
+
+  :host-context([data-theme='dark']) & { background: var(--sw-dark); }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1.4);
+  }
+
+  &:active { transform: scale(0.9); }
+
+  &.on::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Bouton reset */
+.reset {
+  width: 100%;
+  height: 48px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  font-weight: 600;
+  color: var(--ink-2);
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+
+  &:active { transform: scale(0.98); }
+
+  &.done {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+}

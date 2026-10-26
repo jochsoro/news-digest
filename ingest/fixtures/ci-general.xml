@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<channel><title>Fixture CI</title><link>https://example.test</link>
+<item><title>Abidjan : le pont de Cocody ouvre à la circulation</title><link>https://example.test/ci/pont-cocody?utm_source=rss</link><pubDate>2026-10-26T21:32:25Z</pubDate>
+<description>Le nouvel ouvrage reliant Cocody au Plateau a été ouvert ce matin. Les autorités attendent une baisse sensible des embouteillages.</description>
+<media:content url="https://example.test/img/pont.jpg" medium="image" width="1200"/></item>
+<item><title>Rentrée scolaire : les manuels distribués dans 2 000 écoles</title><link>https://example.test/ci/manuels</link><pubDate>2026-10-26T21:32:25Z</pubDate>
+<description>Le ministère annonce la fin de la distribution des kits scolaires.</description></item>
+<item><title>Abidjan : le pont de Cocody ouvre à la circulation</title><link>https://example.test/ci/pont-cocody-bis</link><pubDate>2026-10-26T21:32:25Z</pubDate>
+<description>Reprise par un second média, sans image.</description></item>
+<item><title>Cacao : la campagne intermédiaire démarre avec un prix garanti</title><link>https://example.test/ci/cacao</link><pubDate>2026-10-26T21:32:25Z</pubDate>
+<description>Le Conseil café-cacao fixe le prix bord champ pour la nouvelle campagne.</description>
+<enclosure url="https://example.test/img/cacao.jpg" type="image/jpeg"/></item>
+</channel></rss>

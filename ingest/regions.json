@@ -1,0 +1,42 @@
+{
+  "_doc": "Miroir de src/app/core/data/regions.data.ts (id, name, parentId). À garder synchronisé quand on ajoute une région dans l'app.",
+  "regions": [
+    { "id": "world", "name": "Monde", "parentId": null },
+
+    { "id": "africa", "name": "Afrique", "parentId": "world" },
+    { "id": "europe", "name": "Europe", "parentId": "world" },
+    { "id": "americas", "name": "Amériques", "parentId": "world" },
+    { "id": "asia", "name": "Asie", "parentId": "world" },
+    { "id": "oceania", "name": "Océanie", "parentId": "world" },
+
+    { "id": "ci", "name": "Côte d'Ivoire", "parentId": "africa" },
+    { "id": "sn", "name": "Sénégal", "parentId": "africa" },
+    { "id": "ng", "name": "Nigéria", "parentId": "africa" },
+    { "id": "ma", "name": "Maroc", "parentId": "africa" },
+    { "id": "ci-abidjan", "name": "Abidjan", "parentId": "ci" },
+    { "id": "ci-yamoussoukro", "name": "Yamoussoukro", "parentId": "ci" },
+    { "id": "ci-bouake", "name": "Bouaké", "parentId": "ci" },
+
+    { "id": "fr", "name": "France", "parentId": "europe" },
+    { "id": "gb", "name": "Royaume-Uni", "parentId": "europe" },
+    { "id": "de", "name": "Allemagne", "parentId": "europe" },
+    { "id": "es", "name": "Espagne", "parentId": "europe" },
+    { "id": "fr-paris", "name": "Paris", "parentId": "fr" },
+    { "id": "fr-lyon", "name": "Lyon", "parentId": "fr" },
+    { "id": "fr-rennes", "name": "Rennes", "parentId": "fr" },
+
+    { "id": "us", "name": "États-Unis", "parentId": "americas" },
+    { "id": "br", "name": "Brésil", "parentId": "americas" },
+    { "id": "ca", "name": "Canada", "parentId": "americas" },
+
+    { "id": "cn", "name": "Chine", "parentId": "asia" },
+    { "id": "jp", "name": "Japon", "parentId": "asia" },
+    { "id": "in", "name": "Inde", "parentId": "asia" },
+
+    { "id": "au", "name": "Australie", "parentId": "oceania" }
+  ],
+  "categories": [
+    "general", "world", "geopolitics", "business", "technology", "science",
+    "discovery", "health", "sports", "environment", "culture", "entertainment"
+  ]
+}
