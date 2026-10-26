@@ -30,6 +30,8 @@ const OUT = resolve(process.env.DIGEST_OUT || 'out');
 const MIN_ARTICLES = 3;
 /** Essais og:image pour les manchettes sans visuel (requêtes HTML, bornées). */
 const OG_IMAGE_BUDGET = 40;
+/** Les og:image se résolvent en parallèle, par paquets, pour ne pas allonger le run. */
+const OG_CONCURRENCY = 8;
 
 async function main() {
   const started = Date.now();
@@ -45,7 +47,10 @@ async function main() {
 
   const buckets = group(articles, taxonomy);
 
-  let ogBudget = OG_IMAGE_BUDGET;
+  // Manchettes sans visuel : on résout les og:image en parallèle, une fois,
+  // avant d'assembler les éditions (sinon chaque région attend ses timeouts).
+  if (!FIXTURE) await resolveLeadImages(buckets, taxonomy);
+
   const published = [];
   const stats = { llm: 0, extractive: 0 };
 
@@ -68,11 +73,7 @@ async function main() {
       stats[s.method]++;
 
       const lead = items[0];
-      let imageUrl = items.find((a) => a.imageUrl)?.imageUrl;
-      if (!imageUrl && !FIXTURE && ogBudget > 0) {
-        ogBudget--;
-        imageUrl = await fetchOgImage(lead.url);
-      }
+      const imageUrl = items.find((a) => a.imageUrl)?.imageUrl;
 
       blocks.push({
         category,
@@ -123,12 +124,44 @@ async function main() {
   }
 }
 
+/**
+ * Pour chaque bloc (région × thème) sans aucune image, tente l'og:image de
+ * l'article de tête. Budget global borné, requêtes par paquets parallèles ;
+ * le résultat est écrit sur l'article lui-même (partagé entre les régions
+ * de la hiérarchie, donc résolu une seule fois).
+ */
+async function resolveLeadImages(buckets, taxonomy) {
+  const leads = new Map(); // url → article
+  for (const region of taxonomy.regions) {
+    const perCategory = buckets.get(region.id);
+    if (!perCategory) continue;
+    for (const items of perCategory.values()) {
+      if (items.length && !items.some((a) => a.imageUrl)) leads.set(items[0].url, items[0]);
+      if (leads.size >= OG_IMAGE_BUDGET) break;
+    }
+  }
+  const queue = [...leads.values()];
+  if (!queue.length) return;
+  log(`og:image : ${queue.length} manchettes sans visuel à résoudre`);
+  let found = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(OG_CONCURRENCY, queue.length) }, async () => {
+      while (queue.length) {
+        const a = queue.shift();
+        const url = await fetchOgImage(a.url);
+        if (url) { a.imageUrl = url; found++; }
+      }
+    }),
+  );
+  log(`og:image : ${found} trouvées`);
+}
+
 /** og:image d'une page, avec un budget serré : on lit au plus 64 Ko. */
 async function fetchOgImage(url) {
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'NewsDigestBot/0.1', Accept: 'text/html' },
-      signal: AbortSignal.timeout(6000),
+      signal: AbortSignal.timeout(4000),
       redirect: 'follow',
     });
     if (!res.ok || !res.body) return undefined;

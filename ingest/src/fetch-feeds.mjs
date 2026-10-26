@@ -100,8 +100,8 @@ async function fetchOne(feed, fixture) {
 
     out.push({
       id: hash(url),
-      title,
-      summary: excerpt(item),
+      title: stripAgencyMarks(title),
+      summary: stripAgencyMarks(excerpt(item)),
       url,
       source: sourceName(item, feed),
       publishedAt: new Date(Number.isFinite(published) ? published : Date.now()).toISOString(),
@@ -130,6 +130,21 @@ function canonicalUrl(raw) {
   } catch {
     return null;
   }
+}
+
+/**
+ * Les dépêches d'agence (AIP, APS, MAP…) préfixent titres et chapôs :
+ * « Côte d'Ivoire-AIP/ Titre », « Abidjan, 26 oct 2026 (AIP) – Texte ».
+ * Utile pour un fil d'agence, du bruit dans un digest.
+ */
+export function stripAgencyMarks(text) {
+  return String(text ?? '')
+    // « Pays-AGENCE/ » ou « Rubrique/ » en tête
+    .replace(/^[\p{L}\p{M}'’\s-]{2,40}\/\s*/u, '')
+    // dateline « Ville, 26 oct 2026 (AIP) – »
+    .replace(/^[\p{L}\p{M}\s'’-]{2,40},\s*\d{1,2}\s+[\p{L}.]+\s+\d{4}\s*\([A-Z]{2,6}\)\s*[–—-]\s*/u, '')
+    .replace(/\s*\((?:Round-?up|Actualisé|Mise à jour)\)\s*$/i, '')
+    .trim();
 }
 
 function clean(s) {
