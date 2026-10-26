@@ -1,6 +1,6 @@
 {
   "date": "2026-10-26",
-  "generatedAt": "2026-10-26T21:38:14.220Z",
+  "generatedAt": "2026-10-26T22:20:10.207Z",
   "regions": [
     {
       "regionId": "world",
@@ -65,12 +65,6 @@
     {
       "regionId": "ci-abidjan",
       "name": "Abidjan",
-      "blocks": 1,
-      "method": "extractive"
-    },
-    {
-      "regionId": "ci-bouake",
-      "name": "Bouaké",
       "blocks": 1,
       "method": "extractive"
     },
@@ -159,5 +153,5 @@
       "method": "extractive"
     }
   ],
-  "failures": 16
+  "failures": 17
 }
