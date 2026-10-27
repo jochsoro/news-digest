@@ -80,7 +80,7 @@ jobs:
         working-directory: ingest
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}  # vide = meilleur Flash disponible, choisi au run
           DIGEST_FIXTURE: ${{ inputs.fixture && '1' || '' }}
         run: npm run build
 

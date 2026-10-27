@@ -13,7 +13,7 @@
  *
  * Variables d'environnement :
  *   GEMINI_API_KEY   clé Gemini (sinon résumé extractif)
- *   GEMINI_MODEL     défaut gemini-2.5-flash
+ *   GEMINI_MODEL     facultatif : vide = meilleur modèle Flash disponible pour la clé
  *   DIGEST_FIXTURE=1 mode hors ligne : flux de test dans fixtures/
  *   DIGEST_OUT       dossier de sortie (défaut ./out)
  */
@@ -21,7 +21,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fetchAll, loadFeeds } from './fetch-feeds.mjs';
 import { group, loadTaxonomy } from './group.mjs';
-import { summarizeRegion } from './summarize.mjs';
+import { geminiStatus, summarizeRegion } from './summarize.mjs';
 import { dateInZone, log } from './util.mjs';
 
 const FIXTURE = process.env.DIGEST_FIXTURE === '1';
@@ -117,12 +117,13 @@ async function main() {
   await mkdir(OUT, { recursive: true });
   await writeFile(
     resolve(OUT, 'index.json'),
-    JSON.stringify({ date, generatedAt: new Date().toISOString(), regions: published, failures: failures.length }, null, 2),
+    JSON.stringify({ date, generatedAt: new Date().toISOString(), regions: published, failures: failures.length, ai: geminiStatus() }, null, 2),
   );
   // Cloudflare Pages lit _headers ; GitHub Pages envoie déjà CORS * pour les fichiers statiques.
   await writeFile(resolve(OUT, '_headers'), '/*\n  Access-Control-Allow-Origin: *\n  Cache-Control: public, max-age=300\n');
 
   log(`Terminé en ${Math.round((Date.now() - started) / 1000)} s : ${published.length} éditions, ${stats.llm} blocs LLM, ${stats.extractive} blocs extractifs → ${OUT}`);
+  log(`IA : ${geminiStatus()}`);
   if (published.length === 0) {
     console.error('Aucune édition produite : échec.');
     process.exit(1);

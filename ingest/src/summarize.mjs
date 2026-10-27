@@ -9,8 +9,22 @@
  */
 import { log, sleep } from './util.mjs';
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+/** Modèle imposé (variable GitHub GEMINI_MODEL) ; vide = choisi automatiquement. */
+const GEMINI_MODEL_PREF = (process.env.GEMINI_MODEL || '').trim();
 const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
+const API = 'https://generativelanguage.googleapis.com/v1beta';
+
+/**
+ * État de Gemini pour CE run : modèles candidats (découverts une fois) et
+ * coupe-circuit. Une erreur définitive (modèle retiré, clé refusée, quota
+ * épuisé) coupe l'IA pour le reste du run : on ne martèle pas l'API 25 fois.
+ */
+const gemini = {
+  candidates: /** @type {string[] | null} */ (null),
+  model: /** @type {string | null} */ (null),
+  disabled: false,
+  reason: '',
+};
 /** Pause entre deux appels : reste sous les limites par minute du palier gratuit. */
 const PACE_MS = Number(process.env.GEMINI_PACE_MS || 4500);
 
@@ -42,9 +56,10 @@ export async function summarizeRegion(regionName, perCategory) {
     log(`  (pas de GEMINI_API_KEY : résumé extractif pour ${regionName})`);
     return extractive;
   }
+  if (gemini.disabled) return extractive;
 
   try {
-    const llm = await callGemini(regionName, perCategory);
+    const llm = await callGeminiWithFallback(regionName, perCategory);
     // Fusion : on ne garde le LLM que là où il a répondu proprement.
     const out = new Map(extractive);
     for (const [cat, text] of llm) {
@@ -53,9 +68,91 @@ export async function summarizeRegion(regionName, perCategory) {
     await sleep(PACE_MS);
     return out;
   } catch (e) {
-    log(`  ! Gemini a échoué pour ${regionName} : ${String(e?.message ?? e).slice(0, 160)} → repli extractif`);
+    const msg = String(e?.message ?? e).replace(/\s+/g, ' ').slice(0, 160);
+    if (e?.fatal) {
+      gemini.disabled = true;
+      gemini.reason = msg;
+      log(`  ! Gemini coupé pour ce run (${msg}) → résumé extractif pour toutes les régions`);
+    } else {
+      log(`  ! Gemini a échoué pour ${regionName} : ${msg} → repli extractif`);
+    }
     return extractive;
   }
+}
+
+/** Pour le récapitulatif de fin de run. */
+export function geminiStatus() {
+  if (!GEMINI_KEY) return 'pas de clé';
+  if (gemini.disabled) return `coupé : ${gemini.reason}`;
+  return gemini.model ?? 'non utilisé';
+}
+
+// ---------- choix du modèle ----------
+
+/**
+ * Liste les modèles accessibles à CETTE clé et les classe : Flash stable le
+ * plus récent d'abord, puis préversions, puis « lite ». Google retire
+ * régulièrement des modèles aux nouveaux comptes : aucun nom n'est figé ici.
+ */
+async function discoverModels() {
+  const res = await fetch(`${API}/models?pageSize=200&key=${GEMINI_KEY}`, { signal: AbortSignal.timeout(20_000) });
+  if (!res.ok) throw fatalError(`liste des modèles : HTTP ${res.status}`);
+  const data = await res.json();
+  const EXCLUDE = /(image|tts|audio|live|embed|vision|thinking-exp|-exp|learnlm|gemma|aqa|computer-use|robotics)/i;
+  const ranked = (data.models ?? [])
+    .filter((m) => (m.supportedGenerationMethods ?? []).includes('generateContent'))
+    .map((m) => String(m.name).replace(/^models\//, ''))
+    .filter((n) => n.startsWith('gemini') && n.includes('flash') && !EXCLUDE.test(n))
+    .map((n) => {
+      const version = Number((/gemini-(\d+(?:\.\d+)?)/.exec(n) ?? [])[1] ?? 0);
+      const preview = /preview/.test(n);
+      const lite = /lite/.test(n);
+      const pinned = /-\d{3}$|-\d{2}-\d{4}$/.test(n); // variante datée : on préfère l'alias
+      // Clé de tri : stable > préversion, normal > lite, version la plus haute, alias > daté.
+      return { n, key: [preview ? 0 : 1, lite ? 0 : 1, version, pinned ? 0 : 1] };
+    })
+    .sort((a, b) => {
+      for (let i = 0; i < a.key.length; i++) if (a.key[i] !== b.key[i]) return b.key[i] - a.key[i];
+      return a.n.localeCompare(b.n);
+    })
+    .map((x) => x.n);
+  if (!ranked.length) throw fatalError('aucun modèle Flash disponible pour cette clé');
+  return ranked;
+}
+
+async function candidateModels() {
+  if (gemini.candidates) return gemini.candidates;
+  const discovered = await discoverModels();
+  gemini.candidates = GEMINI_MODEL_PREF
+    ? [GEMINI_MODEL_PREF, ...discovered.filter((m) => m !== GEMINI_MODEL_PREF)]
+    : discovered;
+  log(`  Gemini : modèles candidats ${gemini.candidates.slice(0, 4).join(', ')}${gemini.candidates.length > 4 ? '…' : ''}`);
+  return gemini.candidates;
+}
+
+/** Essaie le modèle retenu ; s'il a été retiré, passe au suivant et s'en souvient. */
+async function callGeminiWithFallback(regionName, perCategory) {
+  const models = gemini.model ? [gemini.model] : (await candidateModels()).slice(0, 4);
+  let lastError;
+  for (const model of models) {
+    try {
+      const out = await callGemini(model, regionName, perCategory);
+      if (gemini.model !== model) {
+        gemini.model = model;
+        log(`  Gemini : modèle retenu « ${model} »`);
+      }
+      return out;
+    } catch (e) {
+      lastError = e;
+      if (e?.status === 404 || e?.status === 400) continue; // modèle indisponible : suivant
+      throw e;
+    }
+  }
+  throw Object.assign(lastError ?? new Error('aucun modèle utilisable'), { fatal: true });
+}
+
+function fatalError(message) {
+  return Object.assign(new Error(message), { fatal: true });
 }
 
 // ---------- repli extractif ----------
@@ -89,7 +186,7 @@ function sameStart(a, b) {
 
 // ---------- Gemini ----------
 
-async function callGemini(regionName, perCategory) {
+async function callGemini(model, regionName, perCategory) {
   const sections = [];
   for (const [cat, items] of perCategory) {
     const lines = items.map((a, i) => `  ${i + 1}. [${a.source}] ${a.title}${a.summary ? ` — ${a.summary.slice(0, 260)}` : ''}`);
@@ -106,7 +203,7 @@ async function callGemini(regionName, perCategory) {
     sections.join('\n\n'),
   ].join('\n');
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`;
+  const url = `${API}/models/${model}:generateContent?key=${GEMINI_KEY}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -136,7 +233,13 @@ async function callGemini(regionName, perCategory) {
 
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`HTTP ${res.status} ${body.slice(0, 200)}`);
+    let detail = body;
+    try { detail = JSON.parse(body)?.error?.message ?? body; } catch { /* corps non JSON */ }
+    const err = new Error(`HTTP ${res.status} ${String(detail).slice(0, 160)}`);
+    err.status = res.status;
+    // Clé refusée ou quota épuisé : inutile d'insister sur les autres régions.
+    if (res.status === 401 || res.status === 403 || res.status === 429) err.fatal = true;
+    throw err;
   }
   const data = await res.json();
   const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join('') ?? '';

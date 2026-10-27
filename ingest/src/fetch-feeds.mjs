@@ -9,7 +9,16 @@ import { log } from './util.mjs';
 
 const TIMEOUT_MS = 12_000;
 /** Plafond absolu par flux, quoi qu'il arrive côté réseau (serveur qui goutte, DNS lent…). */
-const HARD_TIMEOUT_MS = 20_000;
+const HARD_TIMEOUT_MS = 45_000; // jusqu'à 3 tentatives (direct, UA navigateur, repli Google News)
+
+/**
+ * Beaucoup de sites renvoient 403 à un User-Agent de robot, ou aux IP de
+ * datacenters (GitHub Actions). On tente d'abord en navigateur ordinaire,
+ * puis on se replie sur Google News « site:domaine », qui indexe ces médias.
+ */
+const BROWSER_UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
+const BOT_UA = 'NewsDigestBot/0.2 (+https://github.com/jochsoro/news-digest; résumé + lien vers la source)';
 const CONCURRENCY = 8;
 /** Au-delà, un article est trop vieux pour une édition « du jour ». */
 const MAX_AGE_HOURS = 36;
@@ -17,7 +26,7 @@ const MAX_AGE_HOURS = 36;
 const parser = new Parser({
   timeout: TIMEOUT_MS,
   headers: {
-    'User-Agent': 'NewsDigestBot/0.1 (+https://github.com/jochsoro/news-digest; digest quotidien, résumé + lien vers la source)',
+    'User-Agent': BROWSER_UA,
     Accept: 'application/rss+xml, application/atom+xml, application/xml;q=0.9, */*;q=0.8',
   },
   customFields: {
@@ -85,9 +94,14 @@ export async function fetchAll(feeds, { fixture = false } = {}) {
 }
 
 async function fetchOne(feed, fixture) {
-  const parsed = fixture
-    ? await parser.parseString(await readFile(new URL(`../fixtures/${feed.url.replace('fixture:', '')}.xml`, import.meta.url), 'utf8'))
-    : await withHardTimeout(parser.parseURL(feed.url), HARD_TIMEOUT_MS, feed.url);
+  let parsed;
+  if (fixture) {
+    parsed = await parser.parseString(await readFile(new URL(`../fixtures/${feed.url.replace('fixture:', '')}.xml`, import.meta.url), 'utf8'));
+  } else {
+    const loaded = await withHardTimeout(loadFeed(feed), HARD_TIMEOUT_MS, feed.url);
+    parsed = loaded.parsed;
+    feed = loaded.feed; // peut être le repli Google News
+  }
 
   const cutoff = Date.now() - MAX_AGE_HOURS * 3_600_000;
   const out = [];
@@ -114,6 +128,102 @@ async function fetchOne(feed, fixture) {
     });
   }
   return out;
+}
+
+/**
+ * Chaîne de tentatives pour un flux :
+ *   1. téléchargement en UA navigateur (puis UA robot si 403/429, certains
+ *      sites font l'inverse) ;
+ *   2. XML mal formé → nettoyage (commentaires cassés, « & » nus, caractères
+ *      de contrôle, déchets avant la racine) puis nouvel essai ;
+ *   3. tout le reste (404, flux remplacé par du HTML, timeout…) → repli
+ *      Google News « site:domaine » sur les dernières 24 h.
+ */
+async function loadFeed(feed) {
+  let firstError;
+  try {
+    const xml = await fetchFeedText(feed.url);
+    return { parsed: await parseTolerant(xml), feed };
+  } catch (e) {
+    firstError = e;
+  }
+
+  const fallback = googleNewsFallback(feed);
+  if (!fallback) throw firstError;
+  try {
+    const xml = await fetchFeedText(fallback.url);
+    const parsed = await parseTolerant(xml);
+    log(`↻ ${feed.source} [${feed.regionId}/${feed.categoryId}] ${short(firstError)} → repli Google News (${parsed.items?.length ?? 0} articles)`);
+    return { parsed, feed: fallback };
+  } catch {
+    throw firstError;
+  }
+}
+
+async function fetchFeedText(url) {
+  const attempt = async (ua) => {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': ua,
+        Accept: 'application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8, */*;q=0.5',
+        'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.6',
+      },
+      redirect: 'follow',
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!res.ok) {
+      const err = new Error(`Status code ${res.status}`);
+      err.status = res.status;
+      throw err;
+    }
+    return res.text();
+  };
+  try {
+    return await attempt(BROWSER_UA);
+  } catch (e) {
+    if (e?.status === 403 || e?.status === 429) return attempt(BOT_UA);
+    throw e;
+  }
+}
+
+async function parseTolerant(xml) {
+  try {
+    return await parser.parseString(xml);
+  } catch {
+    return parser.parseString(sanitizeXml(xml));
+  }
+}
+
+/** Répare les fautes XML courantes des flux de presse. */
+function sanitizeXml(xml) {
+  return xml
+    .replace(/^\uFEFF/, '')
+    .replace(/^[\s\S]*?(?=<\?xml|<rss|<feed|<rdf:RDF)/i, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/&(?!(?:[a-zA-Z][a-zA-Z0-9]{0,31}|#\d{1,7}|#x[0-9a-fA-F]{1,6});)/g, '&amp;')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+}
+
+/** Google News « site:domaine », 24 h, dans l'édition locale du pays si connue. */
+function googleNewsFallback(feed) {
+  if (feed.source === 'Google News' || feed.viaGoogleNews) return null;
+  let host;
+  try {
+    host = new URL(feed.url).hostname.replace(/^(www|news|feeds?|rss)\./, '');
+  } catch {
+    return null;
+  }
+  const country = ({ ci: 'CI', sn: 'SN', ma: 'MA', ng: 'NG' })[feed.regionId.split('-')[0]] ?? 'FR';
+  const q = encodeURIComponent(`site:${host} when:1d`);
+  return {
+    ...feed,
+    url: `https://news.google.com/rss/search?q=${q}&hl=fr&gl=${country}&ceid=${country}:fr`,
+    viaGoogleNews: true,
+  };
+}
+
+function short(e) {
+  return String(e?.message ?? e).split('\n')[0].slice(0, 60);
 }
 
 /** Abandonne une promesse qui dépasse `ms` : un flux ne doit jamais bloquer l'édition. */
@@ -178,7 +288,7 @@ function excerpt(item) {
 
 /** Google News écrit « Titre - Média » : le média part dans `source`, pas dans le titre. */
 function stripSourceSuffix(title, feed) {
-  if (feed.source !== 'Google News') return title;
+  if (feed.source !== 'Google News' && !feed.viaGoogleNews) return title;
   return title.replace(/\s[-–—]\s[^-–—]{2,60}$/, '').trim();
 }
 
@@ -191,7 +301,7 @@ function sourceName(item, feed) {
     if (inner && String(inner).trim()) return clean(inner);
   }
   // Google News : « Titre - Média » dans le titre.
-  if (feed.source === 'Google News') {
+  if (feed.source === 'Google News' || feed.viaGoogleNews) {
     const m = /\s[-–]\s([^-–]{2,60})$/.exec(item.title ?? '');
     if (m) return m[1].trim();
   }
