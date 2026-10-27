@@ -13,10 +13,16 @@ name: Édition du jour
 
 on:
   schedule:
-    # 04:30 UTC = 05:30 Paris en hiver (06:30 en été). Les crons GitHub tournent en UTC
-    # et peuvent avoir quelques minutes de retard aux heures pleines : on vise la demie.
+    # Les crons GitHub (UTC) sont peu fiables : retardés de plusieurs heures, parfois
+    # sautés. On planifie donc PLUSIEURS créneaux le matin ; le premier qui passe
+    # publie, les suivants voient une édition fraîche (< 2 h) et s'arrêtent net.
+    #   03:30 UTC = 05:30 Paris en été  (04:30 en hiver)
+    #   04:30 UTC = 05:30 Paris en hiver (06:30 en été)
+    #   05:15 UTC = filet de sécurité
+    - cron: '30 3 * * *'
     - cron: '30 4 * * *'
-    # Édition de la mi-journée (facultatif : commente pour ne garder que le matin).
+    - cron: '15 5 * * *'
+    # Édition de la mi-journée : toujours > 2 h après le matin, donc jamais sautée.
     - cron: '30 11 * * *'
   workflow_dispatch:
     inputs:
@@ -37,19 +43,40 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      # Créneau de rattrapage : si une édition a été publiée il y a moins de 2 h,
+      # inutile de refaire le travail. Ne s'applique qu'aux déclenchements planifiés
+      # (un lancement manuel publie toujours).
+      - name: Édition déjà fraîche ?
+        id: fresh
+        if: github.event_name == 'schedule'
+        run: |
+          url="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/index.json"
+          gen=$(curl -fsS --max-time 15 "$url" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(Date.parse(JSON.parse(s).generatedAt)||0)}catch{console.log(0)}})' || echo 0)
+          now=$(date +%s%3N)
+          age=$(( (now - gen) / 60000 ))
+          echo "Dernière édition publiée il y a ${age} min"
+          if [ "$gen" != "0" ] && [ "$age" -lt 120 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "### Édition déjà fraîche (il y a ${age} min) : créneau sauté" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.fresh.outputs.skip != 'true'
 
       - uses: actions/setup-node@v4
+        if: steps.fresh.outputs.skip != 'true'
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: ingest/package-lock.json
 
       - name: Dépendances
+        if: steps.fresh.outputs.skip != 'true'
         working-directory: ingest
         run: npm ci
 
       - name: Fabrication des éditions
+        if: steps.fresh.outputs.skip != 'true'
         working-directory: ingest
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -58,6 +85,7 @@ jobs:
         run: npm run build
 
       - name: Récapitulatif
+        if: steps.fresh.outputs.skip != 'true'
         run: |
           echo "## Éditions publiées" >> "$GITHUB_STEP_SUMMARY"
           node -e '
@@ -70,6 +98,7 @@ jobs:
       # Publie `ingest/out` à la racine de la branche `digests`.
       # keep_files : les éditions des jours précédents restent accessibles par date.
       - name: Publication
+        if: steps.fresh.outputs.skip != 'true'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
