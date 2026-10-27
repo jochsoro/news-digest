@@ -130,11 +130,17 @@ async function candidateModels() {
   return gemini.candidates;
 }
 
-/** Essaie le modèle retenu ; s'il a été retiré, passe au suivant et s'en souvient. */
+/**
+ * Essaie le modèle retenu, puis les suivants. Les quotas gratuits de Gemini
+ * sont PAR MODÈLE : un 429 sur l'un ne dit rien des autres. Un modèle retiré
+ * (404/400) ou à sec (429) sort de la liste pour le reste du run ; on ne coupe
+ * l'IA que lorsqu'il n'en reste plus aucun (ou si la clé elle-même est refusée).
+ */
 async function callGeminiWithFallback(regionName, perCategory) {
-  const models = gemini.model ? [gemini.model] : (await candidateModels()).slice(0, 4);
+  const pool = await candidateModels();
+  const order = gemini.model ? [gemini.model, ...pool.filter((m) => m !== gemini.model)] : [...pool];
   let lastError;
-  for (const model of models) {
+  for (const model of order.slice(0, 6)) {
     try {
       const out = await callGemini(model, regionName, perCategory);
       if (gemini.model !== model) {
@@ -144,11 +150,19 @@ async function callGeminiWithFallback(regionName, perCategory) {
       return out;
     } catch (e) {
       lastError = e;
-      if (e?.status === 404 || e?.status === 400) continue; // modèle indisponible : suivant
-      throw e;
+      if (e?.status === 404 || e?.status === 400 || e?.status === 429) {
+        log(`  Gemini : « ${model} » indisponible (${e.status === 429 ? 'quota épuisé' : 'retiré'}), modèle suivant`);
+        gemini.candidates = (gemini.candidates ?? []).filter((m) => m !== model);
+        if (gemini.model === model) gemini.model = null;
+        continue;
+      }
+      throw e; // 401/403 (clé refusée) restent fatals, 5xx = échec ponctuel de la région
     }
   }
-  throw Object.assign(lastError ?? new Error('aucun modèle utilisable'), { fatal: true });
+  throw Object.assign(lastError ?? new Error('aucun modèle utilisable'), {
+    fatal: true,
+    message: `aucun modèle Gemini utilisable (dernier : ${String(lastError?.message ?? '?').slice(0, 80)})`,
+  });
 }
 
 function fatalError(message) {
@@ -157,17 +171,23 @@ function fatalError(message) {
 
 // ---------- repli extractif ----------
 
-/** Première phrase du meilleur article en manchette, puis le chapô suivant. */
+/**
+ * Sans IA, un bloc raconte UNE histoire : celle de l'article de tête (titre
+ * puis deux phrases de son chapô). Coller plusieurs articles produisait un
+ * texte incohérent ; les autres articles restent accessibles comme sources.
+ */
 export function extractiveSummary(items) {
-  const parts = [];
-  for (const a of items.slice(0, 3)) {
-    const lead = firstSentence(a.title);
-    const body = a.summary && !sameStart(a.summary, a.title) ? firstSentence(a.summary) : '';
-    const sentence = body ? `${ensureDot(lead)} ${ensureDot(body)}` : ensureDot(lead);
-    parts.push(sentence);
-    if (parts.join(' ').length > 420) break;
-  }
-  return parts.join(' ').trim();
+  const lead = items[0];
+  if (!lead) return '';
+  const title = ensureDot(lead.title.trim());
+  const body = lead.summary && !sameStart(lead.summary, lead.title) ? firstSentences(lead.summary, 2) : '';
+  return body ? `${title} ${body}` : title;
+}
+
+function firstSentences(t, n) {
+  const parts = String(t ?? '').trim().match(/[^.!?…]+[.!?…]+(?=\s|$)/g);
+  if (!parts) return ensureDot(String(t ?? '').trim());
+  return parts.slice(0, n).join(' ').trim();
 }
 
 function firstSentence(t) {
@@ -237,8 +257,8 @@ async function callGemini(model, regionName, perCategory) {
     try { detail = JSON.parse(body)?.error?.message ?? body; } catch { /* corps non JSON */ }
     const err = new Error(`HTTP ${res.status} ${String(detail).slice(0, 160)}`);
     err.status = res.status;
-    // Clé refusée ou quota épuisé : inutile d'insister sur les autres régions.
-    if (res.status === 401 || res.status === 403 || res.status === 429) err.fatal = true;
+    // Clé refusée : inutile d'insister. (429 = quota du modèle : géré par le repli de modèle.)
+    if (res.status === 401 || res.status === 403) err.fatal = true;
     throw err;
   }
   const data = await res.json();
