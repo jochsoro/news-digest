@@ -1,11 +1,11 @@
 {
-  "date": "2026-10-26",
-  "generatedAt": "2026-10-26T22:20:10.207Z",
+  "date": "2026-10-27",
+  "generatedAt": "2026-10-27T07:37:20.118Z",
   "regions": [
     {
       "regionId": "world",
       "name": "Monde",
-      "blocks": 10,
+      "blocks": 12,
       "method": "extractive"
     },
     {
@@ -41,7 +41,7 @@
     {
       "regionId": "ci",
       "name": "Côte d'Ivoire",
-      "blocks": 4,
+      "blocks": 3,
       "method": "extractive"
     },
     {
@@ -153,5 +153,6 @@
       "method": "extractive"
     }
   ],
-  "failures": 17
+  "failures": 0,
+  "ai": "coupé : HTTP 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-"
 }
