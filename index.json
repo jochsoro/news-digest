@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-27",
-  "generatedAt": "2026-10-27T16:49:21.181Z",
+  "date": "2026-10-28",
+  "generatedAt": "2026-10-28T10:06:54.627Z",
   "regions": [
     {
       "regionId": "world",
@@ -12,7 +12,7 @@
       "regionId": "africa",
       "name": "Afrique",
       "blocks": 4,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "europe",
@@ -24,24 +24,24 @@
       "regionId": "americas",
       "name": "Amériques",
       "blocks": 2,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "asia",
       "name": "Asie",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "oceania",
       "name": "Océanie",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ci",
       "name": "Côte d'Ivoire",
-      "blocks": 3,
+      "blocks": 4,
       "method": "extractive"
     },
     {
@@ -54,7 +54,7 @@
       "regionId": "ng",
       "name": "Nigéria",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ma",
@@ -90,13 +90,13 @@
       "regionId": "es",
       "name": "Espagne",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "fr-paris",
       "name": "Paris",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "fr-lyon",
@@ -114,7 +114,7 @@
       "regionId": "us",
       "name": "États-Unis",
       "blocks": 2,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "br",
@@ -144,7 +144,7 @@
       "regionId": "in",
       "name": "Inde",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "au",
@@ -154,5 +154,5 @@
     }
   ],
   "failures": 0,
-  "ai": "gemini-3.5-flash-lite"
+  "ai": "gemini-3.6-flash"
 }
