@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-29",
-  "generatedAt": "2026-10-29T17:35:30.866Z",
+  "date": "2026-10-30",
+  "generatedAt": "2026-10-30T10:35:10.998Z",
   "regions": [
     {
       "regionId": "world",
@@ -41,7 +41,7 @@
     {
       "regionId": "ci",
       "name": "Côte d'Ivoire",
-      "blocks": 4,
+      "blocks": 3,
       "method": "extractive"
     },
     {
@@ -60,43 +60,43 @@
       "regionId": "ma",
       "name": "Maroc",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ci-abidjan",
       "name": "Abidjan",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "fr",
       "name": "France",
       "blocks": 8,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "gb",
       "name": "Royaume-Uni",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "de",
       "name": "Allemagne",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "es",
       "name": "Espagne",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "fr-paris",
       "name": "Paris",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "fr-lyon",
@@ -114,31 +114,31 @@
       "regionId": "us",
       "name": "États-Unis",
       "blocks": 2,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "br",
       "name": "Brésil",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ca",
       "name": "Canada",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "cn",
       "name": "Chine",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "jp",
       "name": "Japon",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "in",
@@ -150,9 +150,9 @@
       "regionId": "au",
       "name": "Australie",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     }
   ],
   "failures": 0,
-  "ai": "gemini-3.5-flash-lite"
+  "ai": "gemini-3.6-flash"
 }
