@@ -1,6 +1,6 @@
 {
   "date": "2026-11-01",
-  "generatedAt": "2026-11-01T11:01:31.041Z",
+  "generatedAt": "2026-11-01T17:24:52.108Z",
   "regions": [
     {
       "regionId": "world",
@@ -18,13 +18,13 @@
       "regionId": "europe",
       "name": "Europe",
       "blocks": 8,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "americas",
       "name": "Amériques",
       "blocks": 2,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "asia",
@@ -48,31 +48,31 @@
       "regionId": "sn",
       "name": "Sénégal",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "ng",
       "name": "Nigéria",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "ma",
       "name": "Maroc",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "ci-abidjan",
       "name": "Abidjan",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "ci-yamoussoukro",
       "name": "Yamoussoukro",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "ci-bouake",
@@ -84,7 +84,7 @@
       "regionId": "fr",
       "name": "France",
       "blocks": 8,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "gb",
@@ -96,43 +96,43 @@
       "regionId": "de",
       "name": "Allemagne",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "es",
       "name": "Espagne",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "fr-paris",
       "name": "Paris",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "fr-lyon",
       "name": "Lyon",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "fr-rennes",
       "name": "Rennes",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "us",
       "name": "États-Unis",
       "blocks": 2,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "br",
       "name": "Brésil",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "ca",
@@ -144,7 +144,7 @@
       "regionId": "cn",
       "name": "Chine",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "jp",
@@ -166,5 +166,5 @@
     }
   ],
   "failures": 0,
-  "ai": "gemini-3.6-flash"
+  "ai": "gemini-3.5-flash-lite"
 }
