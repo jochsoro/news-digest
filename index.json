@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-02",
-  "generatedAt": "2026-11-02T20:54:38.004Z",
+  "date": "2026-11-03",
+  "generatedAt": "2026-11-03T11:22:00.040Z",
   "regions": [
     {
       "regionId": "world",
@@ -12,25 +12,25 @@
       "regionId": "africa",
       "name": "Afrique",
       "blocks": 4,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "europe",
       "name": "Europe",
       "blocks": 8,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "americas",
       "name": "Amériques",
       "blocks": 2,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "asia",
       "name": "Asie",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "oceania",
@@ -41,20 +41,20 @@
     {
       "regionId": "ci",
       "name": "Côte d'Ivoire",
-      "blocks": 3,
-      "method": "llm"
+      "blocks": 4,
+      "method": "extractive"
     },
     {
       "regionId": "sn",
       "name": "Sénégal",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ng",
       "name": "Nigéria",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ma",
@@ -78,55 +78,55 @@
       "regionId": "fr",
       "name": "France",
       "blocks": 8,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "gb",
       "name": "Royaume-Uni",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "de",
       "name": "Allemagne",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "es",
       "name": "Espagne",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "fr-paris",
       "name": "Paris",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "fr-lyon",
       "name": "Lyon",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "fr-rennes",
       "name": "Rennes",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "us",
       "name": "États-Unis",
       "blocks": 2,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "br",
       "name": "Brésil",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ca",
@@ -138,13 +138,13 @@
       "regionId": "cn",
       "name": "Chine",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "jp",
       "name": "Japon",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "in",
@@ -156,9 +156,9 @@
       "regionId": "au",
       "name": "Australie",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     }
   ],
   "failures": 0,
-  "ai": "gemini-3.5-flash-lite"
+  "ai": "gemini-3.6-flash"
 }
