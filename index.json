@@ -1,6 +1,6 @@
 {
   "date": "2026-11-07",
-  "generatedAt": "2026-11-07T10:54:16.036Z",
+  "generatedAt": "2026-11-07T16:58:43.065Z",
   "regions": [
     {
       "regionId": "world",
@@ -24,13 +24,13 @@
       "regionId": "americas",
       "name": "Amériques",
       "blocks": 2,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "asia",
       "name": "Asie",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "oceania",
@@ -48,7 +48,7 @@
       "regionId": "sn",
       "name": "Sénégal",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "ng",
@@ -65,6 +65,12 @@
     {
       "regionId": "ci-abidjan",
       "name": "Abidjan",
+      "blocks": 1,
+      "method": "extractive"
+    },
+    {
+      "regionId": "ci-yamoussoukro",
+      "name": "Yamoussoukro",
       "blocks": 1,
       "method": "extractive"
     },
@@ -126,39 +132,39 @@
       "regionId": "br",
       "name": "Brésil",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ca",
       "name": "Canada",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "cn",
       "name": "Chine",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "jp",
       "name": "Japon",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "in",
       "name": "Inde",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "au",
       "name": "Australie",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     }
   ],
   "failures": 0,
-  "ai": "gemini-3.6-flash"
+  "ai": "coupé : aucun modèle Gemini utilisable (dernier : HTTP 429 You exceeded your current quota, please check your plan and billing det)"
 }
