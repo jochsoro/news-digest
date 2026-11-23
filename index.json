@@ -1,6 +1,6 @@
 {
   "date": "2026-11-23",
-  "generatedAt": "2026-11-23T13:38:29.146Z",
+  "generatedAt": "2026-11-23T16:00:24.432Z",
   "regions": [
     {
       "regionId": "world",
@@ -126,13 +126,13 @@
       "regionId": "ca",
       "name": "Canada",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "cn",
       "name": "Chine",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "jp",
@@ -144,15 +144,15 @@
       "regionId": "in",
       "name": "Inde",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "au",
       "name": "Australie",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     }
   ],
   "failures": 0,
-  "ai": "gemini-3.6-flash"
+  "ai": "coupé : aucun modèle Gemini utilisable (dernier : HTTP 429 You exceeded your current quota, please check your plan and billing det)"
 }
