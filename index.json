@@ -1,6 +1,6 @@
 {
   "date": "2026-11-24",
-  "generatedAt": "2026-11-24T14:16:45.593Z",
+  "generatedAt": "2026-11-24T21:35:09.166Z",
   "regions": [
     {
       "regionId": "world",
@@ -66,49 +66,55 @@
       "regionId": "ci-abidjan",
       "name": "Abidjan",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
+    },
+    {
+      "regionId": "ci-bouake",
+      "name": "Bouaké",
+      "blocks": 1,
+      "method": "extractive"
     },
     {
       "regionId": "fr",
       "name": "France",
       "blocks": 8,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "gb",
       "name": "Royaume-Uni",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "de",
       "name": "Allemagne",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "es",
       "name": "Espagne",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "fr-paris",
       "name": "Paris",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "fr-lyon",
       "name": "Lyon",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "fr-rennes",
       "name": "Rennes",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "us",
@@ -153,6 +159,6 @@
       "method": "extractive"
     }
   ],
-  "failures": 1,
-  "ai": "gemini-3.6-flash"
+  "failures": 0,
+  "ai": "coupé : aucun modèle Gemini utilisable (dernier : HTTP 429 You exceeded your current quota, please check your plan and billing det)"
 }
