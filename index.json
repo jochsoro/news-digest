@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-23",
-  "generatedAt": "2026-11-23T22:51:48.945Z",
+  "date": "2026-11-24",
+  "generatedAt": "2026-11-24T14:16:45.593Z",
   "regions": [
     {
       "regionId": "world",
@@ -24,43 +24,43 @@
       "regionId": "americas",
       "name": "Amériques",
       "blocks": 2,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "asia",
       "name": "Asie",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "oceania",
       "name": "Océanie",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ci",
       "name": "Côte d'Ivoire",
       "blocks": 4,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "sn",
       "name": "Sénégal",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ng",
       "name": "Nigéria",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ma",
       "name": "Maroc",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ci-abidjan",
@@ -153,6 +153,6 @@
       "method": "extractive"
     }
   ],
-  "failures": 0,
-  "ai": "coupé : aucun modèle Gemini utilisable (dernier : HTTP 429 You exceeded your current quota, please check your plan and billing det)"
+  "failures": 1,
+  "ai": "gemini-3.6-flash"
 }
