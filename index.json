@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "generatedAt": "2026-11-26T13:01:14.545Z",
+  "generatedAt": "2026-11-26T15:27:20.603Z",
   "regions": [
     {
       "regionId": "world",
@@ -78,7 +78,7 @@
       "regionId": "gb",
       "name": "Royaume-Uni",
       "blocks": 1,
-      "method": "extractive"
+      "method": "llm"
     },
     {
       "regionId": "de",
@@ -154,5 +154,5 @@
     }
   ],
   "failures": 0,
-  "ai": "coupé : aucun modèle Gemini utilisable (dernier : HTTP 429 You exceeded your current quota, please check your plan and billing det)"
+  "ai": "non utilisé"
 }
