@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-25",
-  "generatedAt": "2026-11-25T20:32:51.822Z",
+  "date": "2026-11-26",
+  "generatedAt": "2026-11-26T13:01:14.545Z",
   "regions": [
     {
       "regionId": "world",
@@ -48,7 +48,7 @@
       "regionId": "sn",
       "name": "Sénégal",
       "blocks": 1,
-      "method": "llm"
+      "method": "extractive"
     },
     {
       "regionId": "ng",
@@ -65,12 +65,6 @@
     {
       "regionId": "ci-abidjan",
       "name": "Abidjan",
-      "blocks": 1,
-      "method": "extractive"
-    },
-    {
-      "regionId": "ci-bouake",
-      "name": "Bouaké",
       "blocks": 1,
       "method": "extractive"
     },
